@@ -13,19 +13,22 @@ function Comp() {
   return null
 }
 
-test('example', async () => {
+test('example', () => {
   const container = document.createElement('div')
 
   // using `act` is required to get effect callbacks run when rendering components
   // (React Testing Library does this automatically)
+  jest.useFakeTimers()
+  ReactDOM.render(React.createElement(Comp), container)
+
   act(() => {
-    ReactDOM.render(React.createElement(Comp), container)
+    jest.runAllTimers()
   })
 
   // the `cleanup` function from React Testing Library (which also happens automatically)
   // flushes all the in-flight effects by waiting for the next tick of the event loop
   // this is basically a simplified version of: https://github.com/facebook/react/blob/master/packages/shared/enqueueTask.js
-  await new Promise((resolve) => setImmediate(resolve))
+  // await new Promise((resolve) => setImmediate(resolve))
 
   // this is the last thing that happens in cleanup (to avoid memory leaks)
   ReactDOM.unmountComponentAtNode(container)
